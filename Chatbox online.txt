@@ -1,0 +1,6 @@
+Các tính năng trong Chatbot
+- Đăng kí/Đăng nhập
+- Thả thính
+- Đớp thính
+- Chat 2 người
+- Kết thúc hội thoại
