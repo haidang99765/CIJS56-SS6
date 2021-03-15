@@ -51,10 +51,10 @@ export default class registerForm extends HTMLElement {
                 this.$password.error = "";
             }
 
-            if (confirmpassword == password) {
-                this.$confirmpassword.error = "";
-            } else if (confirmpassword == '') {
-                this.$confirmpassword.error = "Please enter the password you fill to confirm"
+            if (confirmpassword == '') {
+                this.$confirmpassword.error = "Please enter the password you fill to confirm";
+            } else if (confirmpassword == password) {
+                this.$confirmpassword.error = ""
             }
             else {
                 this.$confirmpassword.error = "Please enter the password same the password you fill";
