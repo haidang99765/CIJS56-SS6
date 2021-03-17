@@ -1,7 +1,9 @@
+import {register} from "../model/user.js"
+
 const $template = document.createElement('template');
-$template.innerHTML = `
+$template.innerHTML = /*html*/`
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <form id="login-form" class="p-3"> 
+    <form id="register-form" class="p-3"> 
         <h2 class="text-center">Please register before using this app</h2>
         <p class="text-muted text-center">Join as a member</p>
         <input-wrapper id="name" type="text" placeholder="Name"></input-wrapper>
@@ -18,7 +20,7 @@ export default class registerForm extends HTMLElement {
         this.attachShadow({mode: 'open'});
         this.shadowRoot.appendChild($template.content.cloneNode(true));
 
-        this.$loginForm = this.shadowRoot.getElementById('login-form');
+        this.$registerForm = this.shadowRoot.getElementById('register-form');
         this.$name = this.shadowRoot.getElementById('name');
         this.$email = this.shadowRoot.getElementById('email');
         this.$password = this.shadowRoot.getElementById('password');
@@ -26,46 +28,44 @@ export default class registerForm extends HTMLElement {
     }
 
     connectedCallback() { //connectedCallback chi duoc goi 1 lan duy nhat khi thẻ lần đầu tiên xuất hiện trong thẻ body
-        this.$loginForm.onsubmit = (event) => {
+        this.$registerForm.onsubmit = (event) => {
             event.preventDefault(); //preventDefault là ngăn chặn việc xử lí ngay tại trang đích
+
+            let name = this.$name.value;
             let email = this.$email.value;
             let password = this.$password.value;
-            let confirmpassword = this.$confirmpassword.value;
-            let name = this.$name.value;
 
-            if(name == '') {
-                this.$name.error = "Name cannot be blanked";
-            } else {
-                this.$name.error = "";
+            function require(value) {
+                return value != '';
             }
 
-            if(email == '') {
-                this.$email.error = "Input your email";
-            } else {
-                this.$email.error = "";
+            function confirmPassword(value) {
+                return value == password
             }
 
-            if(password == '') {
-                this.$password.error = "Input your password";
-            } else {
-                this.$password.error = "";
+            function validateEmail(email) {
+                const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                return re.test(String(email).toLowerCase());
             }
 
-            if (confirmpassword == password) {
-                this.$confirmpassword.error = "";
-            } else if (confirmpassword == '') {
-                this.$confirmpassword.error = "Please enter the password you fill to confirm"
-            }
-            else {
-                this.$confirmpassword.error = "Please enter the password same the password you fill";
-            }
+
+            let isPassed = this.$name.validate(require, "Input your name") &
+            (
+                this.$email.validate(require, "Input your email") &&
+                this.$email.validate(validateEmail, "Wrong email format")
+            ) &
+            this.$password.validate(require, "Input your password") &
+            (
+                this.$confirmpassword.validate(require, "Input your password confirmation") &&
+                this.$confirmpassword.validate(confirmPassword, "Password is not match")
+            );
+
+            if (isPassed) {
+                register(name, email, password);
+            } 
         }
     }
 }
 
 window.customElements.define('register-form', registerForm);
 
-//bug nhỏ: ở mục tạo form Đăng kí thì em đã test thì đã kiểm tra được dữ liệu người dùng nhập vào, nhưng 
-//nếu em thực hiện không điền gì vào form đăng kí mà ấn nút "Sign up" luôn thì nó không báo lỗi nếu không điền
-//vào mục Confirm your password, phải đến lúc điền Password vào thì nó mới kiểm tra dữ liệu, em cũng không biết
-//đây có phải lỗi nữa không ạ, có gì anh thấy sai ở đâu thì chỉ em với ạ
