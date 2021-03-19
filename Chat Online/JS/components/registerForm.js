@@ -63,6 +63,9 @@ export default class registerForm extends HTMLElement {
             if (isPassed) {
                 register(name, email, password);
             } 
+        }
+    }
+}
 
 window.customElements.define('register-form', registerForm);
 

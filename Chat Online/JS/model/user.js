@@ -24,18 +24,13 @@ export async function login(email, password) {
     .firestore()
     .collection('users')
     .where('email','==', email)
+    .where("password", "==", md5(password))
     .get()
 
-    if(response.empty) {
-        alert('Your email or your password wrong');
+    if (!response.empty) {
+        alert("Login success");
     } else {
-        for(let pass of response.docs) {
-            if (pass.data().password == md5(password)) {
-                alert("Login success");
-            } else {
-                alert('Your email or your password wrong');
-            }
-        }
+        alert("Email or password is wrong. Try again");
     }
 }
 
