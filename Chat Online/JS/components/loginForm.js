@@ -1,4 +1,5 @@
 import {login} from "../model/user.js"
+import {require, validateEmail} from "../model/utils.js"
 
 const $template = document.createElement('template');
 $template.innerHTML = /*html*/`
@@ -29,15 +30,6 @@ export default class loginForm extends HTMLElement {
             let email = this.$email.value;
             let password = this.$password.value;
 
-            function require(value) {
-                return value != '';
-            }
-
-            function validateEmail(email) {
-                const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-                return re.test(String(email).toLowerCase());
-            }
-
             let isPassed = this.$password.validate(require, "Input your password") &
             (
                 this.$email.validate(require, "Input your email") &&
@@ -45,7 +37,7 @@ export default class loginForm extends HTMLElement {
             );
 
             if (isPassed) {
-                login(email, password)
+                login(email, password);
             }
         }
     }

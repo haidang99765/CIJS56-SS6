@@ -28,7 +28,7 @@ export async function login(email, password) {
     .get()
 
     if (!response.empty) {
-        alert("Login success");
+        router.navigate('/index');
     } else {
         alert("Email or password is wrong. Try again");
     }
